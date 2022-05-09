@@ -48,9 +48,8 @@ int find_min(vector<double>& e,int start_v, vector<bool>& used) {
     return iter;
 }
 // Построение изначального тура с использованием алгоритма ближайшего соседа
-double closest_neighbor(vector<vector<double>> edges, int N,vector<int> &tour) {
+void closest_neighbor(vector<vector<double>> &edges, int &N,vector<int> &tour) {
     int start_v = tour[0];
-    double tour_weight = 0;
     int next_v;
     vector<bool> used(N, false);
     used[start_v] = true;
@@ -58,14 +57,53 @@ double closest_neighbor(vector<vector<double>> edges, int N,vector<int> &tour) {
     while (used[next_v] != true) {
         used[next_v] = true;
         tour.push_back(next_v);
-        tour_weight += edges[start_v][next_v];
         start_v = next_v;
         next_v = find_min(edges[start_v],start_v,used);
     }
-    tour_weight += edges[start_v][tour[0]];
-    return tour_weight;
 }
-
+double tour_weight(vector<vector<double>>& edges, vector<int>& tour) {
+    int size = tour.size();
+    double weight = 0;
+    for (int i = 1; i < size; i++) {
+        weight += edges[tour[i - 1]][tour[i]];
+    }
+    weight += edges[tour[size - 1]][tour[0]];
+    return weight;
+}
+// 2-opt
+vector<int> two_opt_swp(int i, int j, vector<int>& initial_tour, int& N) {
+    vector<int> new_tour;
+    copy(initial_tour.begin(), initial_tour.begin() + i, back_inserter(new_tour));
+    vector<int> reversed_vec;
+    copy(initial_tour.begin() + i, initial_tour.begin() + j + 1, back_inserter(reversed_vec));
+    reverse(reversed_vec.begin(), reversed_vec.end());
+    copy(reversed_vec.begin(), reversed_vec.end(), back_inserter(new_tour));
+    copy(initial_tour.begin() + j + 1, initial_tour.end(), back_inserter(new_tour));
+    return new_tour;
+}
+int two_opt(vector<int>& initial_tour, int& N, vector<vector<double>>& edges) {
+    int improve = 0;
+    int max_possible_improve = 20;
+    vector<int> new_tour;
+    int iter = 0; 
+    double min_dist = tour_weight(edges, initial_tour);
+    while (improve < max_possible_improve) {
+        for (int i = 0; i < N - 1; i++) {
+            for (int j = i+1; j < N; j++) {
+                new_tour = two_opt_swp(i, j, initial_tour,N);
+                double new_dist = tour_weight(edges, new_tour);
+                if (new_dist < min_dist) {
+                    improve = 0;
+                    initial_tour = new_tour;
+                    min_dist = new_dist;
+                }
+            }
+        }
+        iter++;
+        improve++;
+    }
+    return iter;
+}
 int main() {
     int N;
     double a, b;
@@ -91,11 +129,12 @@ int main() {
         }
     }
     V.clear();
-    vector<int> tour;
-    tour.push_back(0);
-    cout << closest_neighbor(edges, N, tour) << endl;
-    show1d_matrix<int>(tour);
-    show2d_matrix<double>(edges, N);
+    vector<int> initial_tour;
+    initial_tour.push_back(0);
+    closest_neighbor(edges, N, initial_tour);
+    cout<<two_opt(initial_tour, N, edges)<<endl;
+    cout << tour_weight(edges,initial_tour) << endl;
+    show1d_matrix<int>(initial_tour);
     return 0;
 }
 
