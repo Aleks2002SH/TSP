@@ -13,11 +13,11 @@ vector<string> filesindir(const fs::path &dir) {
 	}
 	return files;
 }
-void fill_result(vector<int> &tour,ofstream &out,vector<vector<double>> &edges,string &file_name) {
+void fill_result(double &wt,ofstream &out,vector<vector<double>> &edges,string &file_name) {
 	out << file_name << '\n';
-	out << tour_weight(edges,tour)<<'\n';
-	for (int i = 0; i < tour.size(); i++) {
+	out << wt <<'\n';
+	/*for (int i = 0; i < tour.size(); i++) {
 		out << tour[i] << " ";
 	}
-	out << '\n';
+	out << '\n';*/
 }

@@ -38,10 +38,9 @@ int main() {
         vector<int> initial_tour;
         initial_tour.push_back(0);
         closest_neighbor(edges, N, initial_tour);
-        cout << two_opt(initial_tour, N, edges) << endl;
-        cout << tour_weight(edges, initial_tour) << endl;
-        show1d_matrix<int>(initial_tour);
-        fill_result(initial_tour, out, edges,files[file]);
+        double wt = two_opt(initial_tour,N,edges);
+        cout << wt << endl;
+        fill_result(wt, out, edges, files[file]);
         in.close();
     }
     out.close();

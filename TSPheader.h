@@ -81,9 +81,9 @@ vector<int> two_opt_swp(int i, int j, vector<int>& initial_tour, int& N) {
     copy(initial_tour.begin() + j + 1, initial_tour.end(), back_inserter(new_tour));
     return new_tour;
 }
-int two_opt(vector<int>& initial_tour, int& N, vector<vector<double>>& edges) {
+double two_opt(vector<int>& initial_tour, int& N, vector<vector<double>>& edges) {
     int improve = 0;
-    int max_possible_improve = 20;
+    int max_possible_improve = 10;
     vector<int> new_tour;
     int iter = 0;
     double min_dist = tour_weight(edges, initial_tour);
@@ -102,5 +102,6 @@ int two_opt(vector<int>& initial_tour, int& N, vector<vector<double>>& edges) {
         iter++;
         improve++;
     }
-    return iter;
+    cout << iter << endl;
+    return min_dist;
 }
